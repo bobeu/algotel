@@ -11,48 +11,36 @@ from client import markup
 from generateAccount import create_account, get_mnemonics_from_sk, query_balance
 import os
 
-from telegram.ext import (
-    Updater,
-    CommandHandler,
-    Filters,
-    ConversationHandler,
-    PicklePersistence,
-    CallbackContext,
-    MessageHandler
-
-)
+from telegram.ext import (Updater, CommandHandler, Filters,
+                          ConversationHandler, PicklePersistence,
+                          CallbackContext, MessageHandler)
 
 # Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
 # PORT = int(os.environ.get('PORT', 5000))
-getAssetBalance()
 TOKEN = os.environ.get('BOT_TOKEN')  # Token from the bot father
+updateAssetBalance(None, None)
 
 
 def start(update, context: CallbackContext):
-    priceSelfRoll(update, context)
     user = update.message.from_user
-    # use = context.bot.get_me().username
-    # print(use)
-    # print(user)
     reply = "Hi {}! I am ALGOMessenger.".format(user['first_name'])
-    reply += (
-        "I can help you with a few things.\n"
-        "Tell me what you need to do.\nThey should be from the menu.\n"
-        "/GetAlc - Create an account.\n"
-        "/GetPhrase - get Mnemonic words.\n"
-        "/GetBal - account balance.\n"
-        "/Buy_DMT2 - buy GMT2 Token.\n"
-        "/AlcStatus - account information.\n"
-        "/About - about us."
-        "/Help if you need help."
-        "/Cancel to end a conversation."
-        "/Menu pops up the main menu."
-    )
+    reply += ("I can help you with a few things.\n"
+              "Tell me what you need to do.\nThey should be from the menu.\n"
+              "/GetAlc - Create an account.\n"
+              "/GetPhrase - get Mnemonic words.\n"
+              "/GetBal - account balance.\n"
+              "/Buy_DMT2 - buy GMT2 Token.\n"
+              "/AlcStatus - account information.\n"
+              "/About - about us."
+              "/Help if you need help."
+              "/Cancel to end a conversation."
+              "/Menu pops up the main menu.")
     update.message.reply_text(reply, reply_markup=markup)
     context.user_data.clear()
 
@@ -64,14 +52,24 @@ def menuKeyboard(update, context):
 
 # Returns about us
 def aboutUs(update, context):
-    keyboard = [[InlineKeyboardButton("Website", 'https://algorand.com', callback_data='1'),
-                 InlineKeyboardButton("Developer'site", 'https://developer.algorand.org', callback_data='2')],
-
-                [InlineKeyboardButton("Community", 'https://community.algorand.com', callback_data='3')]]
+    keyboard = [[
+        InlineKeyboardButton("Website",
+                             'https://algorand.com',
+                             callback_data='1'),
+        InlineKeyboardButton("Developer'site",
+                             'https://developer.algorand.org',
+                             callback_data='2')
+    ],
+                [
+                    InlineKeyboardButton("Community",
+                                         'https://community.algorand.com',
+                                         callback_data='3')
+                ]]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    update.message.reply_text('Learn more about Algorand:', reply_markup=reply_markup)
+    update.message.reply_text('Learn more about Algorand:',
+                              reply_markup=reply_markup)
 
 
 def help_command(update, context):
@@ -79,9 +77,7 @@ def help_command(update, context):
 
 
 def cancel(update, context):
-    update.message.reply_text(
-        f"Keys were removed:", reply_markup=markup
-    )
+    update.message.reply_text(f"Keys were removed:", reply_markup=markup)
     context.user_data.clear()
     return ConversationHandler.END
 
@@ -99,21 +95,22 @@ def main():
         states={
             CHOOSING: [
                 MessageHandler(
-                    Filters.regex('^(Public_key|Quantity|Secret_Key|Note)$'), regular_choice
-                )
+                    Filters.regex('^(Public_key|Quantity|Secret_Key|Note)$'),
+                    regular_choice)
             ],
             TYPING_CHOICE: [
                 MessageHandler(
-                    Filters.text & ~(Filters.command | Filters.regex('^Done$')), regular_choice
-                )
+                    Filters.text
+                    & ~(Filters.command | Filters.regex('^Done$')),
+                    regular_choice)
             ],
             TYPING_REPLY: [
                 MessageHandler(
-                    Filters.text & ~(Filters.command | Filters.regex('^Done$')),
+                    Filters.text
+                    & ~(Filters.command | Filters.regex('^Done$')),
                     received_information,
                 )
             ],
-
         },
         fallbacks=[MessageHandler(Filters.regex('^Done$'), done)],
     )
