@@ -30,13 +30,11 @@ def optin(update, context, recipient, sk):
             break
     if not holding:
         # Use the AssetTransferTxn class to transfer assets and opt-in
-        txn = AssetTransferTxn(
-            sender=recipient,
-            sp=params,
-            receiver=recipient,
-            amt=0,
-            index=asset_id
-        )
+        txn = AssetTransferTxn(sender=recipient,
+                               sp=params,
+                               receiver=recipient,
+                               amt=0,
+                               index=asset_id)
         # Sign the transaction
         # Firstly, convert mnemonics to private key.
         # For tutorial purpose, we will focus on using private key

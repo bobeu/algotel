@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import logging
 from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from status import account_status
@@ -10,6 +9,7 @@ from getInput import *
 from client import markup
 from generateAccount import create_account, get_mnemonics_from_sk, query_balance
 import os
+import logging
 
 from telegram.ext import (Updater, CommandHandler, Filters,
                           ConversationHandler, PicklePersistence,
